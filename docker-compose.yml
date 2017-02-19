@@ -1,0 +1,36 @@
+version: '2'
+services:
+  php:
+    image: lgelfan/docker-php7-yii2
+    ports:
+     - "81:80"
+    volumes:
+     - ./www/html:/var/www/html
+    links:
+     - mysql
+     - redis
+     
+  redis:
+    image: redis:3.2-alpine
+    volumes:
+     - ./data/redis:/data
+     - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    command: redis-server /usr/local/etc/redis/redis.conf
+    
+  mysql:
+    image: lgelfan/mariadb-alpine
+    volumes:
+     - ./data/mysql:/var/lib/mysql
+     - ./mysql/scripts:/scripts
+    environment:
+     - MYSQL_DATABASE=finky
+     - MYSQL_USER=docker
+     - MYSQL_PASSWORD=qz9r#3u#
+     - MYSQL_ROOT_PASSWORD=qz9r#3u#
+     
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    ports:
+     - "8081:80"
+    links:
+     - mysql:db
